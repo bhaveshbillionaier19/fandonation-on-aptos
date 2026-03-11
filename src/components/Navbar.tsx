@@ -46,7 +46,9 @@ export default function Navbar() {
   const handleConnect = async () => {
     if (wallets && wallets.length > 0) {
         try {
-            await connect(wallets[0].name);
+            const preferred =
+              wallets.find((w: any) => w?.name === "Petra") ?? wallets[0];
+            await connect(preferred.name);
         } catch (error) {
             console.error("Failed to connect wallet", error);
         }
