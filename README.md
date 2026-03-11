@@ -1,4 +1,4 @@
-# Fan Funding Platform on Base
+# Fan Funding Platform on Aptos
 
 A decentralized fan funding platform built on Aptos where creators can mint NFTs and receive direct funding from their supporters.
 
