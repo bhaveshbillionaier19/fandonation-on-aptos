@@ -26,7 +26,7 @@ export default function MintPage() {
   const [txHash, setTxHash] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const { signAndSubmitTransaction, account } = useWallet();
+  const { signTransaction, submitTransaction, account } = useWallet();
 
   const handleFileChange = (files: FileList | null) => {
     if (files && files[0]) {
@@ -70,15 +70,26 @@ export default function MintPage() {
         throw new Error("Failed to upload to IPFS");
       }
 
-      const response = await signAndSubmitTransaction({
+      const { getAptosClient } = await import("@/utils/aptosClient");
+      const aptos = getAptosClient();
+
+      const transaction = await aptos.transaction.build.simple({
+        sender: account.address,
         data: {
           function: `${moduleAddress}::Donation::mint_nft`,
           functionArguments: [name, description, tokenURI],
-        }
+        },
       });
 
-      const { getAptosClient } = await import("@/utils/aptosClient");
-      const aptos = getAptosClient();
+      const { authenticator } = await signTransaction({
+        transactionOrPayload: transaction,
+      });
+
+      const response = await submitTransaction({
+        transaction,
+        senderAuthenticator: authenticator,
+      });
+
       await aptos.waitForTransaction({ transactionHash: response.hash });
       setTxHash(response.hash);
       

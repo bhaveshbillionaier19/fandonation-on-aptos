@@ -36,7 +36,7 @@ export default function NFTCard({ nft, index = 0, onDonation, onTotalsChange }: 
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
-  const { signAndSubmitTransaction, account } = useWallet();
+  const { signTransaction, submitTransaction, account } = useWallet();
 
   const handleDonate = async () => {
     if (!donationAmount || parseFloat(donationAmount) <= 0) {
@@ -53,15 +53,26 @@ export default function NFTCard({ nft, index = 0, onDonation, onTotalsChange }: 
       // Amount in octas
       const amountOctas = BigInt(Math.floor(parseFloat(donationAmount) * 100000000));
       
-      const response = await signAndSubmitTransaction({
-        data: {
-          function: `${moduleAddress}::Donation::donate`,
-          functionArguments: [nft.tokenAddress, amountOctas.toString()],
-        }
-      });
-      
       const { getAptosClient } = await import("@/utils/aptosClient");
       const aptos = getAptosClient();
+
+      const transaction = await aptos.transaction.build.simple({
+        sender: account.address,
+        data: {
+          function: `${moduleAddress}::Donation::donate`,
+          functionArguments: [nft.tokenAddress, amountOctas],
+        },
+      });
+
+      const { authenticator } = await signTransaction({
+        transactionOrPayload: transaction,
+      });
+
+      const response = await submitTransaction({
+        transaction,
+        senderAuthenticator: authenticator,
+      });
+
       await aptos.waitForTransaction({ transactionHash: response.hash });
       
       toast({
