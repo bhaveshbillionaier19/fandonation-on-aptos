@@ -1,14 +1,12 @@
 # Fan Funding Platform on Base
 
-A decentralized fan funding platform built on Base where creators can mint NFTs and receive direct funding from their supporters.
+A decentralized fan funding platform built on Aptos where creators can mint NFTs and receive direct funding from their supporters.
 
 ## 🚀 Deployed Contract
 
-- **Network**: Base Sepolia
-- **Contract Address**: *(to be updated after deployment)*
-- **Chain ID**: 84532
-- **RPC URL**: https://sepolia.base.org
-- **Block Explorer**: https://sepolia.basescan.org/
+- **Network**: Apptos
+- **Contract Address**: 0xbe21f5e2b07a0a7767f94ee7196f83bbc1f0f393f2572b314d79cb99e8cc4c2e
+
 
 ## 🛠️ Tech Stack
 
@@ -17,19 +15,7 @@ A decentralized fan funding platform built on Base where creators can mint NFTs 
 - **Blockchain**: Base Sepolia
 - **Storage**: IPFS via Pinata
 
-## 📦 Installation
 
-```bash
-npm install --legacy-peer-deps
-```
-
-## 🔧 Development
-
-```bash
-npm run dev
-```
-
-## 🌐 Deployment
 
 The app is deployed on Vercel. Environment variables needed:
 - `NEXT_PUBLIC_CONTRACT_ADDRESS`
