@@ -15,6 +15,17 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { moduleAddress } from "@/constants";
 // No static aptos imports here
 
+function formatMintError(error: unknown): string {
+  if (!(error instanceof Error)) return String(error);
+
+  const msg = error.message || "Unknown error";
+  if (msg.includes("Per anonym") || msg.includes("is not valid JSON")) {
+    return "Aptos RPC rejected anonymous requests or rate-limited this call. Set NEXT_PUBLIC_APTOS_API_KEY and retry.";
+  }
+
+  return msg;
+}
+
 export default function MintPage() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -108,7 +119,7 @@ export default function MintPage() {
       console.error(error);
       toast({
         title: "Minting Failed",
-        description: error instanceof Error ? error.message : String(error),
+        description: formatMintError(error),
         variant: "destructive",
       });
     } finally {

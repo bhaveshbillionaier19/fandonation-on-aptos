@@ -9,6 +9,12 @@ export const getAptosClient = () => {
       waitForTransaction: async () => {}
     } as any;
   }
-  const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+  const aptosApiKey = process.env.NEXT_PUBLIC_APTOS_API_KEY;
+  const aptosConfig = new AptosConfig({
+    network: Network.TESTNET,
+    clientConfig: {
+      API_KEY: aptosApiKey || undefined,
+    },
+  });
   return new Aptos(aptosConfig);
 };

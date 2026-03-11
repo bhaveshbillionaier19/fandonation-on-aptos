@@ -18,6 +18,17 @@ import { moduleAddress } from "@/constants";
 // Format APT (1 APT = 10^8 octas)
 const formatAPT = (value: bigint) => (Number(value) / 100000000).toFixed(4);
 
+function formatTxnError(error: unknown): string {
+  if (!(error instanceof Error)) return String(error);
+
+  const msg = error.message || "Unknown error";
+  if (msg.includes("Per anonym") || msg.includes("is not valid JSON")) {
+    return "Aptos RPC rejected anonymous requests or rate-limited this call. Set NEXT_PUBLIC_APTOS_API_KEY and retry.";
+  }
+
+  return msg;
+}
+
 interface NFTCardProps {
   nft: NftData;
   index?: number;
@@ -94,7 +105,7 @@ export default function NFTCard({ nft, index = 0, onDonation, onTotalsChange }: 
       console.error(error);
       toast({
         title: "Donation Failed",
-        description: error instanceof Error ? error.message : "Unknown error",
+        description: formatTxnError(error),
         variant: "destructive"
       });
     } finally {

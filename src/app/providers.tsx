@@ -7,7 +7,18 @@ import { Network } from "@aptos-labs/ts-sdk";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = React.useState(() => new QueryClient());
-  const dappConfig = React.useMemo(() => ({ network: Network.TESTNET }), []);
+  const dappConfig = React.useMemo(() => {
+    const aptosApiKey = process.env.NEXT_PUBLIC_APTOS_API_KEY;
+
+    return {
+      network: Network.TESTNET,
+      aptosApiKeys: aptosApiKey
+        ? {
+            [Network.TESTNET]: aptosApiKey,
+          }
+        : undefined,
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
