@@ -7,6 +7,16 @@ import { Network } from "@aptos-labs/ts-sdk";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = React.useState(() => new QueryClient());
+
+  React.useEffect(() => {
+    // Prevent stale auto-selected wallets (e.g. Petra Web/Aptos Connect) from reconnecting.
+    const walletKey = "AptosWalletName";
+    const selected = window.localStorage.getItem(walletKey);
+    if (selected && selected !== "Petra") {
+      window.localStorage.removeItem(walletKey);
+    }
+  }, []);
+
   const dappConfig = React.useMemo(() => {
     const aptosApiKey = process.env.NEXT_PUBLIC_APTOS_API_KEY;
 
@@ -24,7 +34,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AptosWalletAdapterProvider
         optInWallets={["Petra"]}
-        autoConnect={true}
+        hideWallets={["Petra Web", "Continue with Google", "Continue with Apple"]}
+        autoConnect={false}
         dappConfig={dappConfig}
       >
         {children}

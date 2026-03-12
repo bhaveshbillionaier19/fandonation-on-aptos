@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const navLinks = [
   { href: "/", icon: Home, label: "Home" },
@@ -18,6 +19,7 @@ export default function Navbar() {
   const [copied, setCopied] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const { connect, disconnect, account, connected, network, wallets } = useWallet();
+  const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -45,13 +47,20 @@ export default function Navbar() {
 
   const handleConnect = async () => {
     if (wallets && wallets.length > 0) {
-        try {
-            const preferred =
-              wallets.find((w: any) => w?.name === "Petra") ?? wallets[0];
-            await connect(preferred.name);
-        } catch (error) {
-            console.error("Failed to connect wallet", error);
+      try {
+        const petraWallet = wallets.find((w: any) => w?.name === "Petra");
+        if (!petraWallet) {
+          toast({
+            title: "Petra extension not found",
+            description: "Install Petra browser extension and refresh this page.",
+            variant: "destructive",
+          });
+          return;
         }
+        await connect(petraWallet.name);
+      } catch (error) {
+        console.error("Failed to connect wallet", error);
+      }
     }
   };
 
